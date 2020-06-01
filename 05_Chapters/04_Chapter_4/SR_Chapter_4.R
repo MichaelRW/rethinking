@@ -22,53 +22,62 @@ small <- replicate( 10000 , prod( 1 + runif(12,0,0.01) ) )
      dens(small, norm.comp = TRUE)
 
 
-## R code 4.5 - Section 4.1.3, Normal by log-multiplication - Done May 31, 2020
+## R Code 4.5 - Section 4.1.3, Normal by log-multiplication - Done May 31, 2020
 log.big <- replicate( 10000 , log(prod(1 + runif(12,0,0.5))) )
      dens(log.big, norm.comp = TRUE)
 
 
-## R code 4.6 - Section 4.2.1, Re-describing the Globe Tossing Model
+## R Code 4.6 - Section 4.2.1, Re-describing the Globe Tossing Model
 w <- 6; n <- 9;
 p_grid <- seq(from=0,to=1,length.out=100)
 posterior <- dbinom(w,n,p_grid)*dunif(p_grid,0,1)
 posterior <- posterior/sum(posterior)
 
 
-## R code 4.7
+## R Code 4.7 - Section 4.3, Gaussian Model of Height
 library(rethinking)
 data(Howell1)
 d <- Howell1
 
-## R code 4.8
+
+## R Code 4.8 - Section 4.3, Gaussian Model of Height
 str( d )
 
-## R code 4.9
+
+## R Code 4.9 - Section 4.3, Gaussian Model of Height
 precis( d )
 
-## R code 4.10
+
+## R Code 4.10 - Section 4.3, Gaussian Model of Height
 d$height
 
-## R code 4.11
+
+## R Code 4.11 - Section 4.3, Gaussian Model of Height
 d2 <- d[ d$age >= 18 , ]
 
-## R code 4.12
+
+## R Code 4.12 - Section 4.3, Gaussian Model of Height
 curve( dnorm( x , 178 , 20 ) , from=100 , to=250 )
 
-## R code 4.13
+
+## R Code 4.13 - Section 4.3, Gaussian Model of Height
 curve( dunif( x , 0 , 50 ) , from=-10 , to=60 )
 
-## R code 4.14
+
+## R Code 4.14 - Section 4.3, Gaussian Model of Height
 sample_mu <- rnorm( 1e4 , 178 , 20 )
 sample_sigma <- runif( 1e4 , 0 , 50 )
 prior_h <- rnorm( 1e4 , sample_mu , sample_sigma )
 dens( prior_h )
 
-## R code 4.15
+
+## R Code 4.15 - Section 4.3, Gaussian Model of Height
 sample_mu <- rnorm( 1e4 , 178 , 100 )
 prior_h <- rnorm( 1e4 , sample_mu , sample_sigma )
 dens( prior_h )
 
-## R code 4.16
+
+## R Code 4.16 - Section 4.3, Gaussian Model of Height
 mu.list <- seq( from=150, to=160 , length.out=100 )
 sigma.list <- seq( from=7 , to=9 , length.out=100 )
 post <- expand.grid( mu=mu.list , sigma=sigma.list )
@@ -78,33 +87,39 @@ post$prod <- post$LL + dnorm( post$mu , 178 , 20 , TRUE ) +
      dunif( post$sigma , 0 , 50 , TRUE )
 post$prob <- exp( post$prod - max(post$prod) )
 
-## R code 4.17
-contour_xyz( post$mu , post$sigma , post$prob )
 
-## R code 4.18
-image_xyz( post$mu , post$sigma , post$prob )
+## R Code 4.17 - Section 4.3, Gaussian Model of Height
+dev.new(); contour_xyz( post$mu , post$sigma , post$prob )
 
-## R code 4.19
-sample.rows <- sample( 1:nrow(post) , size=1e4 , replace=TRUE ,
-                       prob=post$prob )
+## R Code 4.18 - Section 4.3, Gaussian Model of Height
+dev.new(); image_xyz( post$mu , post$sigma , post$prob )
+
+
+## R Code 4.19 - Section 4.3, Gaussian Model of Height
+sample.rows <- sample( 1:nrow(post) , size=1e3 , replace=TRUE, prob=post$prob )
 sample.mu <- post$mu[ sample.rows ]
 sample.sigma <- post$sigma[ sample.rows ]
 
-## R code 4.20
+
+## R Code 4.20 - Section 4.3, Gaussian Model of Height
 plot( sample.mu , sample.sigma , cex=0.5 , pch=16 , col=col.alpha(rangi2,0.1) )
 
-## R code 4.21
-dens( sample.mu )
-dens( sample.sigma )
 
-## R code 4.22
+## R Code 4.21 - Section 4.3, Gaussian Model of Height
+windows(); dens( sample.mu )
+windows(); dens( sample.sigma )
+
+
+## R Code 4.22 - Section 4.3, Gaussian Model of Height
 PI( sample.mu )
 PI( sample.sigma )
 
-## R code 4.23
+
+## R Code 4.23 - Section 4.3, Gaussian Model of Height
 d3 <- sample( d2$height , size=20 )
 
-## R code 4.24
+
+## R Code 4.24 - Section 4.3, Gaussian Model of Height
 mu.list <- seq( from=150, to=170 , length.out=200 )
 sigma.list <- seq( from=4 , to=20 , length.out=200 )
 post2 <- expand.grid( mu=mu.list , sigma=sigma.list )
@@ -122,8 +137,10 @@ plot( sample2.mu , sample2.sigma , cex=0.5 ,
       col=col.alpha(rangi2,0.1) ,
       xlab="mu" , ylab="sigma" , pch=16 )
 
-## R code 4.25
+
+## R Code 4.25 - Section 4.3, Gaussian Model of Height
 dens( sample2.sigma , norm.comp=TRUE )
+
 
 ## R code 4.26
 library(rethinking)
