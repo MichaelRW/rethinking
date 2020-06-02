@@ -1,21 +1,21 @@
 
 
 
-## R code 4.1 - Section 4.1.1, Normal by Addition - Done May 31, 2020
+## R Code 4.1 - Section 4.1.1, Normal by Addition - Done May 31, 2020
 pos <- replicate( 1e3 , sum( runif(16,-1,1) ) )
 dens( pos, norm.comp = TRUE )
 
 
-## R code 4.2 - Section 4.1.2, Normal by Multiplication - Done May 31, 2020
+## R Code 4.2 - Section 4.1.2, Normal by Multiplication - Done May 31, 2020
 prod( 1 + runif( 12, 0, 0.1 ) )
 
 
-## R code 4.3 - Section 4.1.2 - Done May 31, 2020
+## R Code 4.3 - Section 4.1.2 - Done May 31, 2020
 growth <- replicate( 10000 , prod( 1 + runif( 12, 0, 0.1 ) ) )
 dens( growth , norm.comp=TRUE )
 
 
-## R code 4.4 - Section 4.1.2 - Done May 31, 2020
+## R Code 4.4 - Section 4.1.2 - Done May 31, 2020
 big <- replicate( 10000 , prod( 1 + runif(12,0,0.5) ) )
      dens(big, norm.comp=TRUE)
 small <- replicate( 10000 , prod( 1 + runif(12,0,0.01) ) )
@@ -142,33 +142,38 @@ plot( sample2.mu , sample2.sigma , cex=0.5 ,
 dens( sample2.sigma , norm.comp=TRUE )
 
 
-## R code 4.26
+## R Code 4.26 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 library(rethinking)
 data(Howell1)
 d <- Howell1
 d2 <- d[ d$age >= 18 , ]
 
-## R code 4.27
+
+## R Code 4.27 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 flist <- alist(
      height ~ dnorm( mu , sigma ) ,
      mu ~ dnorm( 178 , 20 ) ,
      sigma ~ dunif( 0 , 50 )
 )
 
-## R code 4.28
+
+## R Code 4.28 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 m4.1 <- quap( flist , data=d2 )
 
-## R code 4.29
+
+## R Code 4.29 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 precis( m4.1 )
 
-## R code 4.30
+
+## R Code 4.30 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 start <- list(
      mu=mean(d2$height),
      sigma=sd(d2$height)
 )
 m4.1 <- quap( flist , data=d2 , start=start )
 
-## R code 4.31
+
+## R Code 4.31 - Section 4.3.5, Finding the Posterior Distribution with QUAP.
 m4.2 <- quap(
      alist(
           height ~ dnorm( mu , sigma ) ,
@@ -177,37 +182,37 @@ m4.2 <- quap(
      ) , data=d2 )
 precis( m4.2 )
 
-## R code 4.32
+## R Code 4.32
 vcov( m4.1 )
 
-## R code 4.33
+## R Code 4.33
 diag( vcov( m4.1 ) )
 cov2cor( vcov( m4.1 ) )
 
-## R code 4.34
+## R Code 4.34
 library(rethinking)
 post <- extract.samples( m4.1 , n=1e4 )
 head(post)
 
-## R code 4.35
+## R Code 4.35
 precis(post)
 
-## R code 4.36
+## R Code 4.36
 library(MASS)
 post <- mvrnorm( n=1e4 , mu=coef(m4.1) , Sigma=vcov(m4.1) )
 
-## R code 4.37
+## R Code 4.37
 library(rethinking)
 data(Howell1); d <- Howell1; d2 <- d[ d$age >= 18 , ]
 plot( d2$height ~ d2$weight )
 
-## R code 4.38
+## R Code 4.38
 set.seed(2971)
 N <- 100                   # 100 lines
 a <- rnorm( N , 178 , 20 )
 b <- rnorm( N , 0 , 10 )
 
-## R code 4.39
+## R Code 4.39
 plot( NULL , xlim=range(d2$weight) , ylim=c(-100,400) ,
       xlab="weight" , ylab="height" )
 abline( h=0 , lty=2 )
@@ -218,17 +223,17 @@ for ( i in 1:N ) curve( a[i] + b[i]*(x - xbar) ,
                         from=min(d2$weight) , to=max(d2$weight) , add=TRUE ,
                         col=col.alpha("black",0.2) )
 
-## R code 4.40
+## R Code 4.40
 b <- rlnorm( 1e4 , 0 , 1 )
 dens( b , xlim=c(0,5) , adj=0.1 )
 
-## R code 4.41
+## R Code 4.41
 set.seed(2971)
 N <- 100                   # 100 lines
 a <- rnorm( N , 178 , 20 )
 b <- rlnorm( N , 0 , 1 )
 
-## R code 4.42
+## R Code 4.42
 # load data again, since it's a long way back
 library(rethinking)
 data(Howell1); d <- Howell1; d2 <- d[ d$age >= 18 , ]
@@ -246,7 +251,7 @@ m4.3 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d2 )
 
-## R code 4.43
+## R Code 4.43
 m4.3b <- quap(
      alist(
           height ~ dnorm( mu , sigma ) ,
@@ -256,24 +261,24 @@ m4.3b <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d2 )
 
-## R code 4.44
+## R Code 4.44
 precis( m4.3 )
 
-## R code 4.45
+## R Code 4.45
 round( vcov( m4.3 ) , 3 )
 
-## R code 4.46
+## R Code 4.46
 plot( height ~ weight , data=d2 , col=rangi2 )
 post <- extract.samples( m4.3 )
 a_map <- mean(post$a)
 b_map <- mean(post$b)
 curve( a_map + b_map*(x - xbar) , add=TRUE )
 
-## R code 4.47
+## R Code 4.47
 post <- extract.samples( m4.3 )
 post[1:5,]
 
-## R code 4.48
+## R Code 4.48
 N <- 10
 dN <- d2[ 1:N , ]
 mN <- quap(
@@ -285,7 +290,7 @@ mN <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=dN )
 
-## R code 4.49
+## R Code 4.49
 # extract 20 samples from the posterior
 post <- extract.samples( mN , n=20 )
 
@@ -300,21 +305,21 @@ for ( i in 1:20 )
      curve( post$a[i] + post$b[i]*(x-mean(dN$weight)) ,
             col=col.alpha("black",0.3) , add=TRUE )
 
-## R code 4.50
+## R Code 4.50
 post <- extract.samples( m4.3 )
 mu_at_50 <- post$a + post$b * ( 50 - xbar )
 
-## R code 4.51
+## R Code 4.51
 dens( mu_at_50 , col=rangi2 , lwd=2 , xlab="mu|weight=50" )
 
-## R code 4.52
+## R Code 4.52
 PI( mu_at_50 , prob=0.89 )
 
-## R code 4.53
+## R Code 4.53
 mu <- link( m4.3 )
 str(mu)
 
-## R code 4.54
+## R Code 4.54
 # define sequence of weights to compute predictions for
 # these values will be on the horizontal axis
 weight.seq <- seq( from=25 , to=70 , by=1 )
@@ -325,7 +330,7 @@ weight.seq <- seq( from=25 , to=70 , by=1 )
 mu <- link( m4.3 , data=data.frame(weight=weight.seq) )
 str(mu)
 
-## R code 4.55
+## R Code 4.55
 # use type="n" to hide raw data
 plot( height ~ weight , d2 , type="n" )
 
@@ -333,12 +338,12 @@ plot( height ~ weight , d2 , type="n" )
 for ( i in 1:100 )
      points( weight.seq , mu[i,] , pch=16 , col=col.alpha(rangi2,0.1) )
 
-## R code 4.56
+## R Code 4.56
 # summarize the distribution of mu
 mu.mean <- apply( mu , 2 , mean )
 mu.PI <- apply( mu , 2 , PI , prob=0.89 )
 
-## R code 4.57
+## R Code 4.57
 # plot raw data
 # fading out points to make line and interval more visible
 plot( height ~ weight , data=d2 , col=col.alpha(rangi2,0.5) )
@@ -349,7 +354,7 @@ lines( weight.seq , mu.mean )
 # plot a shaded region for 89% PI
 shade( mu.PI , weight.seq )
 
-## R code 4.58
+## R Code 4.58
 post <- extract.samples(m4.3)
 mu.link <- function(weight) post$a + post$b*( weight - xbar )
 weight.seq <- seq( from=25 , to=70 , by=1 )
@@ -357,14 +362,14 @@ mu <- sapply( weight.seq , mu.link )
 mu.mean <- apply( mu , 2 , mean )
 mu.CI <- apply( mu , 2 , PI , prob=0.89 )
 
-## R code 4.59
+## R Code 4.59
 sim.height <- sim( m4.3 , data=list(weight=weight.seq) )
 str(sim.height)
 
-## R code 4.60
+## R Code 4.60
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R code 4.61
+## R Code 4.61
 # plot raw data
 plot( height ~ weight , d2 , col=col.alpha(rangi2,0.5) )
 
@@ -377,11 +382,11 @@ shade( mu.HPDI , weight.seq )
 # draw PI region for simulated heights
 shade( height.PI , weight.seq )
 
-## R code 4.62
+## R Code 4.62
 sim.height <- sim( m4.3 , data=list(weight=weight.seq) , n=1e4 )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R code 4.63
+## R Code 4.63
 post <- extract.samples(m4.3)
 weight.seq <- 25:70
 sim.height <- sapply( weight.seq , function(weight)
@@ -391,12 +396,12 @@ sim.height <- sapply( weight.seq , function(weight)
           sd=post$sigma ) )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R code 4.64
+## R Code 4.64
 library(rethinking)
 data(Howell1)
 d <- Howell1
 
-## R code 4.65
+## R Code 4.65
 d$weight_s <- ( d$weight - mean(d$weight) )/sd(d$weight)
 d$weight_s2 <- d$weight_s^2
 m4.5 <- quap(
@@ -409,10 +414,10 @@ m4.5 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d )
 
-## R code 4.66
+## R Code 4.66
 precis( m4.5 )
 
-## R code 4.67
+## R Code 4.67
 weight.seq <- seq( from=-2.2 , to=2 , length.out=30 )
 pred_dat <- list( weight_s=weight.seq , weight_s2=weight.seq^2 )
 mu <- link( m4.5 , data=pred_dat )
@@ -421,13 +426,13 @@ mu.PI <- apply( mu , 2 , PI , prob=0.89 )
 sim.height <- sim( m4.5 , data=pred_dat )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R code 4.68
+## R Code 4.68
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) )
 lines( weight.seq , mu.mean )
 shade( mu.PI , weight.seq )
 shade( height.PI , weight.seq )
 
-## R code 4.69
+## R Code 4.69
 d$weight_s3 <- d$weight_s^3
 m4.6 <- quap(
      alist(
@@ -440,36 +445,36 @@ m4.6 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d )
 
-## R code 4.70
+## R Code 4.70
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) , xaxt="n" )
 
-## R code 4.71
+## R Code 4.71
 at <- c(-2,-1,0,1,2)
 labels <- at*sd(d$weight) + mean(d$weight)
 axis( side=1 , at=at , labels=round(labels,1) )
 
-## R code 4.72
+## R Code 4.72
 library(rethinking)
 data(cherry_blossoms)
 d <- cherry_blossoms
 precis(d)
 
-## R code 4.73
+## R Code 4.73
 d2 <- d[ complete.cases(d$doy) , ] # complete cases on doy
 num_knots <- 15
 knot_list <- quantile( d2$year , probs=seq(0,1,length.out=num_knots) )
 
-## R code 4.74
+## R Code 4.74
 library(splines)
 B <- bs(d2$year,
         knots=knot_list[-c(1,num_knots)] ,
         degree=3 , intercept=TRUE )
 
-## R code 4.75
+## R Code 4.75
 plot( NULL , xlim=range(d2$year) , ylim=c(0,1) , xlab="year" , ylab="basis" )
 for ( i in 1:ncol(B) ) lines( d2$year , B[,i] )
 
-## R code 4.76
+## R Code 4.76
 m4.7 <- quap(
      alist(
           D ~ dnorm( mu , sigma ) ,
@@ -480,20 +485,20 @@ m4.7 <- quap(
      ), data=list( D=d2$doy , B=B ) ,
      start=list( w=rep( 0 , ncol(B) ) ) )
 
-## R code 4.77
+## R Code 4.77
 post <- extract.samples( m4.7 )
 w <- apply( post$w , 2 , mean )
 plot( NULL , xlim=range(d2$year) , ylim=c(-6,6) ,
       xlab="year" , ylab="basis * weight" )
 for ( i in 1:ncol(B) ) lines( d2$year , w[i]*B[,i] )
 
-## R code 4.78
+## R Code 4.78
 mu <- link( m4.7 )
 mu_PI <- apply(mu,2,PI,0.97)
 plot( d2$year , d2$doy , col=col.alpha(rangi2,0.3) , pch=16 )
 shade( mu_PI , d2$year , col=col.alpha("black",0.5) )
 
-## R code 4.79
+## R Code 4.79
 m4.7alt <- quap(
      alist(
           D ~ dnorm( mu , sigma ) ,
