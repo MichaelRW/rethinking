@@ -182,24 +182,31 @@ m4.2 <- quap(
      ) , data=d2 )
 precis( m4.2 )
 
-## R Code 4.32
+
+## R Code 4.32 - Section 4.3.6, Sampling from a QUAP
 vcov( m4.1 )
 
-## R Code 4.33
+
+## R Code 4.33 - Section 4.3.6, Sampling from a QUAP
 diag( vcov( m4.1 ) )
 cov2cor( vcov( m4.1 ) )
 
-## R Code 4.34
+
+## R Code 4.34 - Section 4.3.6, Sampling from a QUAP
 library(rethinking)
 post <- extract.samples( m4.1 , n=1e4 )
 head(post)
 
-## R Code 4.35
-precis(post)
 
-## R Code 4.36
+## R Code 4.35 - Section 4.3.6, Sampling from a QUAP
+precis(post, hist=FALSE)
+plot(post, asp=1)
+
+
+## R Code 4.36 - Section 4.3.6, Sampling from a QUAP
 library(MASS)
 post <- mvrnorm( n=1e4 , mu=coef(m4.1) , Sigma=vcov(m4.1) )
+
 
 ## R Code 4.37
 library(rethinking)
