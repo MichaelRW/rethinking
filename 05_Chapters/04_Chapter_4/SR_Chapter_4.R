@@ -208,20 +208,20 @@ library(MASS)
 post <- mvrnorm( n=1e4 , mu=coef(m4.1) , Sigma=vcov(m4.1) )
 
 
-## R Code 4.37
+## R Code 4.37 - Section 4.4, Linear Prediction
 library(rethinking)
 data(Howell1); d <- Howell1; d2 <- d[ d$age >= 18 , ]
-plot( d2$height ~ d2$weight )
+plot( d2$height ~ d2$weight, asp = 1 )
 
 
-## R Code 4.38
+## R Code 4.38 - Section 4.4.1, The Linear Model Strategy
 set.seed(2971)
 N <- 100                   # 100 lines
 a <- rnorm( N , 178 , 20 )
 b <- rnorm( N , 0 , 10 )
 
 
-## R Code 4.39
+## R Code 4.39 - Section 4.4.1, The Linear Model Strategy
 plot( NULL , xlim=range(d2$weight) , ylim=c(-100,400) ,
       xlab="weight" , ylab="height" )
 abline( h=0 , lty=2 )
@@ -233,18 +233,19 @@ for ( i in 1:N ) curve( a[i] + b[i]*(x - xbar) ,
                         col=col.alpha("black",0.2) )
 
 
-## R Code 4.40
+## R Code 4.40 - Section 4.4.1, The Linear Model Strategy
 b <- rlnorm( 1e4 , 0 , 1 )
 dens( b , xlim=c(0,5) , adj=0.1 )
 
-## R Code 4.41
+
+## R Code 4.41 - Section 4.4.1, The Linear Model Strategy
 set.seed(2971)
 N <- 100                   # 100 lines
 a <- rnorm( N , 178 , 20 )
 b <- rlnorm( N , 0 , 1 )
 
 
-## R Code 4.42
+## R Code 4.42 - Section 4.4.2, Finding the Posterior Distribution
 # load data again, since it's a long way back
 library(rethinking)
 data(Howell1); d <- Howell1; d2 <- d[ d$age >= 18 , ]
@@ -263,7 +264,8 @@ m4.3 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d2 )
 
-## R Code 4.43
+
+## R Code 4.43 - Section 4.4.2, Finding the Posterior Distribution
 m4.3b <- quap(
      alist(
           height ~ dnorm( mu , sigma ) ,
@@ -273,26 +275,31 @@ m4.3b <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d2 )
 
-## R Code 4.44
+
+## R Code 4.44 - Section 4.4.3, Interpreting the Posterior Distribution
 precis( m4.3 )
 
-## R Code 4.45
+
+## R Code 4.45 - Section 4.4.3, Interpreting the Posterior Distribution
 round( vcov( m4.3 ) , 3 )
 
-## R Code 4.46
-plot( height ~ weight , data=d2 , col=rangi2 )
+
+## R Code 4.46 - Section 4.4.3.2 - Plotting Posterior Inference Against the Data
+plot( height ~ weight , data=d2 , col=rangi2, asp=1 )
 post <- extract.samples( m4.3 )
 a_map <- mean(post$a)
 b_map <- mean(post$b)
 curve( a_map + b_map*(x - xbar) , add=TRUE )
 
-## R Code 4.47
+
+## R Code 4.47 - Section 4.4.3.3 - Additing Uncertainty Around the Mean
 post <- extract.samples( m4.3 )
 post[1:5,]
 
-## R Code 4.48
-N <- 10
-dN <- d2[ 1:N , ]
+
+## R Code 4.48 - Section 4.4.3.3 - Additing Uncertainty Around the Mean
+N <- 10  # 10 data points from dataset.
+dN <- d2[ 1:N , ]  # Get 10 rows with every column.
 mN <- quap(
      alist(
           height ~ dnorm( mu , sigma ) ,
@@ -302,77 +309,87 @@ mN <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=dN )
 
-## R Code 4.49
-# extract 20 samples from the posterior
+
+## R Code 4.49 - Section 4.4.3.3 - Adding Uncertainty Around the Mean
+# Extract 20 samples from the posterior.
 post <- extract.samples( mN , n=20 )
 
-# display raw data and sample size
+
+# Display raw data and sample size.
 plot( dN$weight , dN$height ,
       xlim=range(d2$weight) , ylim=range(d2$height) ,
-      col=rangi2 , xlab="weight" , ylab="height" )
+      col=rangi2 , xlab="weight" , ylab="height", asp=1 )
 mtext(concat("N = ",N))
 
-# plot the lines, with transparency
+# Plot the lines with transparency.
 for ( i in 1:20 )
      curve( post$a[i] + post$b[i]*(x-mean(dN$weight)) ,
             col=col.alpha("black",0.3) , add=TRUE )
 
-## R Code 4.50
-post <- extract.samples( m4.3 )
+
+## R Code 4.50 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+post <- extract.samples( m4.3 )  # Default to 1e4 samples.
 mu_at_50 <- post$a + post$b * ( 50 - xbar )
 
-## R Code 4.51
+
+## R Code 4.51 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
 dens( mu_at_50 , col=rangi2 , lwd=2 , xlab="mu|weight=50" )
 
-## R Code 4.52
+
+## R Code 4.52 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
 PI( mu_at_50 , prob=0.89 )
 
-## R Code 4.53
-mu <- link( m4.3 )
-str(mu)
 
-## R Code 4.54
-# define sequence of weights to compute predictions for
-# these values will be on the horizontal axis
+## R Code 4.53 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+mu <- link( m4.3 )  # Default 1e3 samples.
+str(mu)  # Compact display the structure of arbitrary R object.
+
+
+## R Code 4.54 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+#
+# Define sequence of weights to compute predictions for on the horizontal axis.
 weight.seq <- seq( from=25 , to=70 , by=1 )
 
-# use link to compute mu
-# for each sample from posterior
-# and for each weight in weight.seq
+# Use LINK to compute mu for each sample from posterior and for each weight in weights.seq.
 mu <- link( m4.3 , data=data.frame(weight=weight.seq) )
 str(mu)
 
-## R Code 4.55
-# use type="n" to hide raw data
-plot( height ~ weight , d2 , type="n" )
 
-# loop over samples and plot each mu value
+## R Code 4.55 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+plot( height ~ weight , d2 , type="n" )  # Use type="n" to hide raw data.
+
+# Loop over samples and plot each mu value.
 for ( i in 1:100 )
      points( weight.seq , mu[i,] , pch=16 , col=col.alpha(rangi2,0.1) )
 
-## R Code 4.56
-# summarize the distribution of mu
+
+## R Code 4.56 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+#
+# Summarize the distribution of mu.
 mu.mean <- apply( mu , 2 , mean )
 mu.PI <- apply( mu , 2 , PI , prob=0.89 )
 
-## R Code 4.57
-# plot raw data
-# fading out points to make line and interval more visible
-plot( height ~ weight , data=d2 , col=col.alpha(rangi2,0.5) )
 
-# plot the MAP line, aka the mean mu for each weight
+## R Code 4.57 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
+#
+# Plot raw data with fading out points to make line and interval more visible.
+plot( height ~ weight , data=d2 , col=col.alpha(rangi2,0.5), asp=1 )
+
+# Plot the MAP line (aka the mean mu for each weight).
 lines( weight.seq , mu.mean )
 
-# plot a shaded region for 89% PI
+# Plot a shaded region for 89% PI.
 shade( mu.PI , weight.seq )
 
-## R Code 4.58
+
+## R Code 4.58 - Section 4.4.3.4 - Plotting Regression Intervals and Contours
 post <- extract.samples(m4.3)
 mu.link <- function(weight) post$a + post$b*( weight - xbar )
 weight.seq <- seq( from=25 , to=70 , by=1 )
 mu <- sapply( weight.seq , mu.link )
 mu.mean <- apply( mu , 2 , mean )
 mu.CI <- apply( mu , 2 , PI , prob=0.89 )
+
 
 ## R Code 4.59
 sim.height <- sim( m4.3 , data=list(weight=weight.seq) )
