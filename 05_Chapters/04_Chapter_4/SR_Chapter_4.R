@@ -391,31 +391,29 @@ mu.mean <- apply( mu , 2 , mean )
 mu.CI <- apply( mu , 2 , PI , prob=0.89 )
 
 
-## R Code 4.59
+## R Code 4.59 - Section 4.4.3.5 - Prediction Intervals
 sim.height <- sim( m4.3 , data=list(weight=weight.seq) )
 str(sim.height)
 
-## R Code 4.60
+
+## R Code 4.60 - Section 4.4.3.5 - Prediction Intervals
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R Code 4.61
-# plot raw data
-plot( height ~ weight , d2 , col=col.alpha(rangi2,0.5) )
 
-# draw MAP line
-lines( weight.seq , mu.mean )
+## R Code 4.61 - Section 4.4.3.5 - Prediction Intervals
+#
+plot( height ~ weight , d2 , col=col.alpha(rangi2,0.5), asp=1 )  # Plot raw data.
+lines( weight.seq , mu.mean )  # Draw maximum aposterior (MAP) line.
+shade( mu.HPDI , weight.seq )  # Draw highest posterior density interval (HPDI) region for line.
+shade( height.PI , weight.seq )  # Draw percentile (PI) region for simulated heights.
 
-# draw HPDI region for line
-shade( mu.HPDI , weight.seq )
 
-# draw PI region for simulated heights
-shade( height.PI , weight.seq )
-
-## R Code 4.62
+## R Code 4.62 - Section 4.4.3.5 - Prediction Intervals
 sim.height <- sim( m4.3 , data=list(weight=weight.seq) , n=1e4 )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R Code 4.63
+
+## R Code 4.63 - Section 4.4.3.5 - Prediction Intervals
 post <- extract.samples(m4.3)
 weight.seq <- 25:70
 sim.height <- sapply( weight.seq , function(weight)
@@ -425,12 +423,14 @@ sim.height <- sapply( weight.seq , function(weight)
           sd=post$sigma ) )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R Code 4.64
+
+## R Code 4.64 - Section 4.5 - Curves from Lines
 library(rethinking)
 data(Howell1)
 d <- Howell1
 
-## R Code 4.65
+
+## R Code 4.65 - Curves from Lines
 d$weight_s <- ( d$weight - mean(d$weight) )/sd(d$weight)
 d$weight_s2 <- d$weight_s^2
 m4.5 <- quap(
@@ -443,10 +443,12 @@ m4.5 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d )
 
-## R Code 4.66
+
+## R Code 4.66 - Curves from Lines
 precis( m4.5 )
 
-## R Code 4.67
+
+## R Code 4.67 - Curves from Lines
 weight.seq <- seq( from=-2.2 , to=2 , length.out=30 )
 pred_dat <- list( weight_s=weight.seq , weight_s2=weight.seq^2 )
 mu <- link( m4.5 , data=pred_dat )
@@ -455,13 +457,15 @@ mu.PI <- apply( mu , 2 , PI , prob=0.89 )
 sim.height <- sim( m4.5 , data=pred_dat )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
-## R Code 4.68
+
+## R Code 4.68 - Curves from Lines
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) )
 lines( weight.seq , mu.mean )
 shade( mu.PI , weight.seq )
 shade( height.PI , weight.seq )
 
-## R Code 4.69
+
+## R Code 4.69 - Curves from Lines
 d$weight_s3 <- d$weight_s^3
 m4.6 <- quap(
      alist(
@@ -474,13 +478,16 @@ m4.6 <- quap(
           sigma ~ dunif( 0 , 50 )
      ) , data=d )
 
-## R Code 4.70
+
+## R Code 4.70 - Curves from Lines
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) , xaxt="n" )
 
-## R Code 4.71
+
+## R Code 4.71 - Curves from Lines
 at <- c(-2,-1,0,1,2)
 labels <- at*sd(d$weight) + mean(d$weight)
 axis( side=1 , at=at , labels=round(labels,1) )
+
 
 ## R Code 4.72
 library(rethinking)
