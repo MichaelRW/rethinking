@@ -430,7 +430,7 @@ data(Howell1)
 d <- Howell1
 
 
-## R Code 4.65 - Curves from Lines
+## R Code 4.65 - Section 4.5 - Curves from Lines
 d$weight_s <- ( d$weight - mean(d$weight) )/sd(d$weight)
 d$weight_s2 <- d$weight_s^2
 m4.5 <- quap(
@@ -444,11 +444,11 @@ m4.5 <- quap(
      ) , data=d )
 
 
-## R Code 4.66 - Curves from Lines
+## R Code 4.66 - Section 4.5 - Curves from Lines
 precis( m4.5 )
 
 
-## R Code 4.67 - Curves from Lines
+## R Code 4.67 - Section 4.5 - Curves from Lines
 weight.seq <- seq( from=-2.2 , to=2 , length.out=30 )
 pred_dat <- list( weight_s=weight.seq , weight_s2=weight.seq^2 )
 mu <- link( m4.5 , data=pred_dat )
@@ -458,14 +458,14 @@ sim.height <- sim( m4.5 , data=pred_dat )
 height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
 
 
-## R Code 4.68 - Curves from Lines
+## R Code 4.68 - Section 4.5 - Curves from Lines
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) )
 lines( weight.seq , mu.mean )
 shade( mu.PI , weight.seq )
 shade( height.PI , weight.seq )
 
 
-## R Code 4.69 - Curves from Lines
+## R Code 4.69 - Section 4.5 - Curves from Lines
 d$weight_s3 <- d$weight_s^3
 m4.6 <- quap(
      alist(
@@ -479,62 +479,72 @@ m4.6 <- quap(
      ) , data=d )
 
 
-## R Code 4.70 - Curves from Lines
+## R Code 4.70 - Section 4.5 - Curves from Lines
 plot( height ~ weight_s , d , col=col.alpha(rangi2,0.5) , xaxt="n" )
 
 
-## R Code 4.71 - Curves from Lines
+## R Code 4.71 - Section 4.5 - Curves from Lines
 at <- c(-2,-1,0,1,2)
 labels <- at*sd(d$weight) + mean(d$weight)
 axis( side=1 , at=at , labels=round(labels,1) )
 
 
-## R Code 4.72
+## R Code 4.72 - Section 4.5.2 - Splines
 library(rethinking)
 data(cherry_blossoms)
 d <- cherry_blossoms
-precis(d)
+precis(d, hist=FALSE)
 
-## R Code 4.73
-d2 <- d[ complete.cases(d$doy) , ] # complete cases on doy
+
+## R Code 4.73 - Section 4.5.2 - Splines
+d2 <- d[ complete.cases(d$doy) , ]  # Complete cases on day-of-year (doy).
 num_knots <- 15
 knot_list <- quantile( d2$year , probs=seq(0,1,length.out=num_knots) )
 
-## R Code 4.74
+
+## R Code 4.74 - Section 4.5.2 - Splines
 library(splines)
 B <- bs(d2$year,
         knots=knot_list[-c(1,num_knots)] ,
         degree=3 , intercept=TRUE )
 
-## R Code 4.75
+
+## R Code 4.75 - Section 4.5.2 - Splines
 plot( NULL , xlim=range(d2$year) , ylim=c(0,1) , xlab="year" , ylab="basis" )
 for ( i in 1:ncol(B) ) lines( d2$year , B[,i] )
 
-## R Code 4.76
+
+## R Code 4.76 - Section 4.5.2 - Splines
 m4.7 <- quap(
      alist(
-          D ~ dnorm( mu , sigma ) ,
-          mu <- a + B %*% w ,
+          D ~ dnorm( mu , sigma ),
+          mu <- a + B %*% w,  # Matrix Multiplication - B: 827-by-17, w: 17-by-1, Product: 827-by-1
           a ~ dnorm(100,10),
           w ~ dnorm(0,10),
           sigma ~ dexp(1)
      ), data=list( D=d2$doy , B=B ) ,
      start=list( w=rep( 0 , ncol(B) ) ) )
 
-## R Code 4.77
+
+## R Code 4.77 - Section 4.5.2 - Splines
 post <- extract.samples( m4.7 )
 w <- apply( post$w , 2 , mean )
 plot( NULL , xlim=range(d2$year) , ylim=c(-6,6) ,
       xlab="year" , ylab="basis * weight" )
 for ( i in 1:ncol(B) ) lines( d2$year , w[i]*B[,i] )
 
-## R Code 4.78
+
+## R Code 4.78 - Section 4.5.2 - Splines
 mu <- link( m4.7 )
 mu_PI <- apply(mu,2,PI,0.97)
 plot( d2$year , d2$doy , col=col.alpha(rangi2,0.3) , pch=16 )
 shade( mu_PI , d2$year , col=col.alpha("black",0.5) )
 
-## R Code 4.79
+
+## R Code 4.79 - Section 4.5.2 - Splines
+#
+# Alternative calculation does not use matrix multiplication.
+#
 m4.7alt <- quap(
      alist(
           D ~ dnorm( mu , sigma ) ,
